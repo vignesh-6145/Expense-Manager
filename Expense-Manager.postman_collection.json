@@ -13,7 +13,17 @@
 					"name": "GetUsers",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": "localhost:8081/users"
+					},
+					"response": []
+				},
+				{
+					"name": "GetUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8081/users/1001"
 					},
 					"response": []
 				}

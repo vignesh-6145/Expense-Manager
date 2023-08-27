@@ -11,10 +11,13 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vignesh.ExpenseManager.Exceptions.UserNotFoundException;
 
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 
 @RestController
@@ -42,6 +45,12 @@ public class UserController {
 //		users.replaceAll(this::createUser);	// appending links to each user one by one 
 		CollectionModel<User> usersWithHyperlinks = CollectionModel.of(users);
 		return usersWithHyperlinks;
+	}
+	
+	@PutMapping(path="/updateUser")
+	public User updateUser(@Valid @RequestBody User user) {
+		System.out.println(user);
+		return user;
 	}
 	
 	@GetMapping(path="/users/{userId}")

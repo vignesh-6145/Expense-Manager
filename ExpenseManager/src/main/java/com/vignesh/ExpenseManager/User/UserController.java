@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vignesh.ExpenseManager.Exceptions.UserNotFoundException;
+
 import jakarta.websocket.server.PathParam;
 
 @RestController
@@ -24,7 +26,6 @@ public class UserController {
 		int userId = user.getUserId();
 		Link selfLink = linkTo(UserController.class).slash(userId).withSelfRel();
 		Link allUsersLink = linkTo(methodOn(UserController.class).getAllUsers()).withRel("all-users");
-		
 		user.add(selfLink);
 		user.add(allUsersLink);
 		return user;
@@ -45,6 +46,9 @@ public class UserController {
 	
 	@GetMapping(path="/users/{userId}")
 	public User getUser(@PathVariable int userId ) {
+		User user = repository.findById(userId).orElse(null);
+		if(user==null)
+			throw new UserNotFoundException(String.format("id %d was not found in our records", userId));			
 		return createUser(repository.findById(userId).get());
 	}
 }

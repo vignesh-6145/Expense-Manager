@@ -1,0 +1,23 @@
+{
+	"info": {
+		"_postman_id": "8da3d6ac-db78-41e4-845e-68330deb5bc1",
+		"name": "Expense-Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "27170340"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "GetUsers",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

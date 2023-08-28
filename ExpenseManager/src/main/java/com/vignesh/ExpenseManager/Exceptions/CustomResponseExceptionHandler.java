@@ -37,4 +37,15 @@ public class CustomResponseExceptionHandler extends ResponseEntityExceptionHandl
 		return new ResponseEntity(errorDetails,HttpStatus.BAD_REQUEST);
 	}
 	
+	@ExceptionHandler(InvalidActionException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidActionException(Exception ex, WebRequest request){
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
+	@ExceptionHandler(InvalidPasswordException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidPasswordException(Exception ex, WebRequest request){
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
+	
 }

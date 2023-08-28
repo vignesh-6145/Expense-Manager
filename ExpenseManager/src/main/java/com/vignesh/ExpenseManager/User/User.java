@@ -2,9 +2,7 @@ package com.vignesh.ExpenseManager.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,10 +16,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity(name="users")
+//@JsonFilter("UserFilter")
 public class User extends RepresentationModel<User>{
 	@Id
 	@GeneratedValue
@@ -41,7 +39,7 @@ public class User extends RepresentationModel<User>{
 	
 	@Column(name="password")
 	@NotNull(message="Password can't be null")
-	@JsonIgnore		//Password can't be shown to all hence not including in the response
+//	@JsonIgnore		//Password can't be shown to all hence not including in the response
 	private String password;
 	
 	@Column(name="Email")
@@ -153,6 +151,11 @@ public class User extends RepresentationModel<User>{
 
 	public void setDoj(LocalDateTime doj) {
 		this.doj = doj;
+	}
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", userName=" + userName + ", dob=" + dob + ", openingAmount=" + openingAmount
+				+ ", password=" + password + ", email=" + email + ", role=" + role + ", doj=" + doj + "]";
 	}
 	
 }

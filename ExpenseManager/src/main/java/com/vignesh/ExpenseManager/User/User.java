@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vignesh.ExpenseManager.Expense.Expense;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,10 +15,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity(name="users")
@@ -60,14 +60,23 @@ public class User extends RepresentationModel<User>{
 	
 	private UserRoles role;
 	
+	@OneToMany(mappedBy = "user")
+	@JsonIgnore
+	private List<Expense> expenses;
+	
 	@Column(name="doj")
 	private LocalDateTime doj;
+	
+	public User() {
+		super();
+	}
+
 	public User(int userId, @NotNull(message = "User Name Can't be null") String userName,
 			@Past(message = "Date Of Birth should be in the past") LocalDate dob,
 			@PositiveOrZero(message = "Please start with atleast zero balance") double openingAmount,
 			@NotNull(message = "Password can't be null") String password,
 			@NotNull(message = "Email can't be null") @Email(message = "Please enter a valid Email ex:- abc@gmail.com") String email,
-			/*List<User> friends,*/ UserRoles role, LocalDateTime doj) {
+			UserRoles role, List<Expense> expenses, LocalDateTime doj) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -75,12 +84,9 @@ public class User extends RepresentationModel<User>{
 		this.openingAmount = openingAmount;
 		this.password = password;
 		this.email = email;
-//		this.friends = friends;
 		this.role = role;
+		this.expenses = expenses;
 		this.doj = doj;
-	}
-	public User() {
-		super();
 	}
 
 	public int getUserId() {
@@ -131,20 +137,20 @@ public class User extends RepresentationModel<User>{
 		this.email = email;
 	}
 
-//	public List<User> getFriends() {
-//		return friends;
-//	}
-
-//	public void setFriends(List<User> friends) {
-//		this.friends = friends;
-//	}
-
 	public UserRoles getRole() {
 		return role;
 	}
 
 	public void setRole(UserRoles role) {
 		this.role = role;
+	}
+
+	public List<Expense> getExpenses() {
+		return expenses;
+	}
+
+	public void setExpenses(List<Expense> expenses) {
+		this.expenses = expenses;
 	}
 
 	public LocalDateTime getDoj() {
@@ -155,4 +161,6 @@ public class User extends RepresentationModel<User>{
 		this.doj = doj;
 	}
 	
+	
+		
 }

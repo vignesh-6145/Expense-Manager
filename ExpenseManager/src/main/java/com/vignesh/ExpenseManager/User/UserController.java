@@ -73,17 +73,7 @@ public class UserController {
 			throw new UserNotFoundException(String.format("id %d was not found in our records", userId));			
 		return createUser(userRepository.findById(userId).get());
 	}
-	@GetMapping(path="/users/{userId}/expenses")
-	public ResponseEntity<CollectionModel> getUserExpense(@PathVariable int userId){
-		Optional<User> user = userRepository.findById(userId);
-		System.out.println(user.get().getExpenses());
-		if(user.isEmpty())
-			throw new UserNotFoundException(String.format("User with Id : %d not found in our records", userId));
-
-		
-//		return new ResponseEntity<List<En>> (,HttpStatus.OK);
-		return new ResponseEntity<CollectionModel>(CollectionModel.of(user.get().getExpenses().stream().map(expense -> createExpense(expense)).toList()),HttpStatus.OK);
-	}
+	
 	
 	@PostMapping(path="/users/{userId}/addExpense")
 	public ResponseEntity addUserExpense(@PathVariable int userId, @Valid @RequestBody Expense expense) {

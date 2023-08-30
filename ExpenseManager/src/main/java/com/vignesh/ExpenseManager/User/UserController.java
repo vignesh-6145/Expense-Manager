@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,7 @@ public class UserController {
 	public UserController(UserRepository userRepository,ExpenseRepository expenseRepository) {
 		this.userRepository = userRepository;
 		this.expenseRepository = expenseRepository;
+
 	}
 	
 	@GetMapping(path="/users")
@@ -78,6 +80,7 @@ public class UserController {
 		System.out.println(user.get().getExpenses());
 		if(user.isEmpty())
 			throw new UserNotFoundException(String.format("User with Id : %d not found in our records", userId));
+
 		
 //		return new ResponseEntity<List<En>> (,HttpStatus.OK);
 		return new ResponseEntity<CollectionModel>(CollectionModel.of(user.get().getExpenses().stream().map(expense -> createExpense(expense)).toList()),HttpStatus.OK);
@@ -92,5 +95,6 @@ public class UserController {
 //		System.out.println();
 		
 		return ResponseEntity.created(linkTo(methodOn(UserController.class).getUser(user.get().getUserId())).slash("expenses").slash(expense.getId()).toUri()).build();
+
 	}
 }

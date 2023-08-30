@@ -24,7 +24,6 @@ public class ExpenseController {
 	public ResponseEntity<List<Expense>> getExpenses(){
 		return new ResponseEntity<List<Expense>>(expenseRepository.findAll(),HttpStatus.OK);
 	}
-	
 	@GetMapping(path="/expenses/{expenseId}")
 	public ResponseEntity<Expense> getExpense(@PathVariable int expenseId){
 		return new ResponseEntity<Expense>(expenseRepository.findById(expenseId).get(),HttpStatus.OK);

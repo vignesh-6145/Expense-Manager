@@ -28,7 +28,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "updateUser",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -42,6 +42,55 @@
 							}
 						},
 						"url": "localhost:8081/updateUser"
+					},
+					"response": []
+				},
+				{
+					"name": "User's Expenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8081/users/1001/expenses"
+					},
+					"response": []
+				},
+				{
+					"name": "Add User Expense",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"description\": \"Vijayawada Petrols\",\r\n\t\"amount\": 1000.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8081/users/1001/addExpense"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Expense",
+			"item": [
+				{
+					"name": "GetExpenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8081/expenses"
+					},
+					"response": []
+				},
+				{
+					"name": "GetExpense",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}

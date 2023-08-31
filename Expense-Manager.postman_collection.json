@@ -26,6 +26,24 @@
 						"url": "localhost:8081/users/1001"
 					},
 					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"userId\": 1001,\r\n\t\"userName\": \"Vignesh\",\r\n\t\"openingAmount\": 61456.0,\r\n\t\"password\": \"password\",\r\n\t\"email\": \"vignesh.bandla001@gmail.com\"\r\n\t\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8081/updateUser"
+					},
+					"response": []
 				}
 			]
 		}

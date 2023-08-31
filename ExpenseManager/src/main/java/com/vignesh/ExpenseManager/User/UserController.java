@@ -1,21 +1,26 @@
 package com.vignesh.ExpenseManager.User;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vignesh.ExpenseManager.Exceptions.InvalidActionException;
+import com.vignesh.ExpenseManager.Exceptions.InvalidPasswordException;
 import com.vignesh.ExpenseManager.Exceptions.UserNotFoundException;
 
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 
 @RestController
 public class UserController {
@@ -37,18 +42,48 @@ public class UserController {
 	}
 	
 	@GetMapping(path="/users")
-	public CollectionModel<User> getAllUsers(){
+	public ResponseEntity<CollectionModel<User>> getAllUsers(){
 		List<User> users = repository.findAll().stream().map(user -> createUser(user)).toList();
 //		users.replaceAll(this::createUser);	// appending links to each user one by one 
 		CollectionModel<User> usersWithHyperlinks = CollectionModel.of(users);
-		return usersWithHyperlinks;
+//		return usersWithHyperlinks;
+		return new ResponseEntity<CollectionModel<User>>(usersWithHyperlinks,HttpStatus.OK);
+	}
+	
+	@PutMapping(path="/updateUser")
+	// Can update any field except 
+	// 		password	-	A Separate method should be implemented with special validations
+	//		DOJ			-	User has no control over this field	
+	public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
+		System.out.println(user);
+		User existingInfo = repository.findById(user.getUserId()).orElse(null);
+		if(existingInfo==null)
+			throw new UserNotFoundException(String.format("id %d was not found in our records", user.getUserId()));
+		if(!existingInfo.getPassword().equals(user.getPassword())) {
+			throw new InvalidPasswordException("Please Check the password you had entered");
+		}
+		if(user.getDoj()!=null)
+			throw new InvalidActionException("Date Of Joining Can't be modified according our policies");
+		
+		
+		if(user.getDob()!=null)
+			existingInfo.setDob(user.getDob());
+		if(user.getUserName()!=null)
+			existingInfo.setUserName(user.getUserName());
+		if(user.getOpeningAmount()!=0)
+			existingInfo.setOpeningAmount(user.getOpeningAmount());
+		
+		repository.save(existingInfo);
+//		return user;
+		return new ResponseEntity<User>(existingInfo,HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/users/{userId}")
-	public User getUser(@PathVariable int userId ) {
+	public ResponseEntity<User> getUser(@PathVariable int userId ) {
 		User user = repository.findById(userId).orElse(null);
 		if(user==null)
 			throw new UserNotFoundException(String.format("id %d was not found in our records", userId));			
-		return createUser(repository.findById(userId).get());
+		user = createUser(repository.findById(userId).get());
+		return new ResponseEntity<User>(user,HttpStatus.OK);
 	}
 }

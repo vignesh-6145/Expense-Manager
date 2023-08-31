@@ -2,9 +2,11 @@ package com.vignesh.ExpenseManager.Exceptions;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -25,9 +27,25 @@ public class CustomResponseExceptionHandler extends ResponseEntityExceptionHandl
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
 		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.NOT_FOUND);
 	}
-//	@ExceptionHandler(UserNotFoundException.class)
-//	public final ResponseEntity<ErrorDetails> handleUserNotFoundExceptionExceptions(Exception ex, WebRequest request) throws Exception {
-//		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false)); 
-//		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.NOT_FOUND);
-//	}
+	
+//	@ExceptionHandler(MethodArgumentNotValidException.class)
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now()
+				,String.format("There are %d errors and %s was the first error", ex.getErrorCount(),ex.getFieldError().getDefaultMessage())
+				, request.getDescription(false));
+		return new ResponseEntity(errorDetails,HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(InvalidActionException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidActionException(Exception ex, WebRequest request){
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
+	@ExceptionHandler(InvalidPasswordException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidPasswordException(Exception ex, WebRequest request){
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
+	
 }

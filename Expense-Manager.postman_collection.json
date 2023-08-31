@@ -29,6 +29,7 @@
 				},
 				{
 					"name": "updateUser",
+
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -93,6 +94,7 @@
 						"header": []
 					},
 					"response": []
+
 				}
 			]
 		}

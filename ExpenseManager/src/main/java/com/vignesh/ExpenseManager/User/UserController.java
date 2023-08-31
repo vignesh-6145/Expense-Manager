@@ -6,16 +6,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,7 +61,7 @@ public class UserController {
 	}
 	
 	@GetMapping(path="/users")
-	public CollectionModel<User> getAllUsers(){
+	public ResponseEntity<CollectionModel<User>> getAllUsers(){
 		List<User> users = userRepository.findAll().stream().map(user -> createUser(user)).toList();
 //		users.replaceAll(this::createUser);	// appending links to each user one by one 
 		CollectionModel<User> usersWithHyperlinks = CollectionModel.of(users);
@@ -75,7 +75,7 @@ public class UserController {
 	//		DOJ			-	User has no control over this field	
 	public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
 		System.out.println(user);
-		User existingInfo = repository.findById(user.getUserId()).orElse(null);
+		User existingInfo = userRepository.findById(user.getUserId()).orElse(null);
 		if(existingInfo==null)
 			throw new UserNotFoundException(String.format("id %d was not found in our records", user.getUserId()));
 		if(!existingInfo.getPassword().equals(user.getPassword())) {
@@ -92,7 +92,7 @@ public class UserController {
 		if(user.getOpeningAmount()!=0)
 			existingInfo.setOpeningAmount(user.getOpeningAmount());
 		
-		repository.save(existingInfo);
+		userRepository.save(existingInfo);
 //		return user;
 		return new ResponseEntity<User>(existingInfo,HttpStatus.OK);
 	}
@@ -112,10 +112,10 @@ public class UserController {
   }
   @GetMapping(path="/users/{userId}")
 	public ResponseEntity<User> getUser(@PathVariable int userId ) {
-		User user = repository.findById(userId).orElse(null);
+		User user = userRepository.findById(userId).orElse(null);
 		if(user==null)
 			throw new UserNotFoundException(String.format("id %d was not found in our records", userId));			
-		user = createUser(repository.findById(userId).get());
+		user = createUser(userRepository.findById(userId).get());
 		return new ResponseEntity<User>(user,HttpStatus.OK);
 
 	}

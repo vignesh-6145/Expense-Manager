@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vignesh.ExpenseManager.Exceptions.ExpenseNotFoundException;
 import com.vignesh.ExpenseManager.Exceptions.InvalidActionException;
 import com.vignesh.ExpenseManager.Exceptions.InvalidPasswordException;
 import com.vignesh.ExpenseManager.Exceptions.UserNotFoundException;
@@ -37,8 +38,10 @@ public class UserController {
 		int userId = user.getUserId();
 		Link selfLink = linkTo(UserController.class).slash(userId).withSelfRel();
 		Link allUsersLink = linkTo(methodOn(UserController.class).getAllUsers()).withRel("all-users");
-		user.add(selfLink);
-		user.add(allUsersLink);
+		Link expensesLink = linkTo(methodOn(UserController.class).getUser(userId)).withRel("expenses");
+//		user.add(selfLink);
+//		user.add(allUsersLink);
+		user.add(selfLink,allUsersLink,expensesLink);
 		return user;
 	}
 	
@@ -117,6 +120,26 @@ public class UserController {
 			throw new UserNotFoundException(String.format("id %d was not found in our records", userId));			
 		user = createUser(userRepository.findById(userId).get());
 		return new ResponseEntity<User>(user,HttpStatus.OK);
-
 	}
+  @GetMapping(path="/users/{userId}/expenses")
+	public ResponseEntity<CollectionModel> getUserExpense(@PathVariable int userId){
+		Optional<User> user = userRepository.findById(userId);
+		System.out.println(user.get().getExpenses());
+		if(user.isEmpty())
+			throw new UserNotFoundException(String.format("User with Id : %d not found in our records", userId));
+
+		return new ResponseEntity<CollectionModel>(CollectionModel.of(user.get().getExpenses().stream().map(expense -> createExpense(expense)).toList()),HttpStatus.OK);
+	}
+  @GetMapping(path="/users/{userId}/expenses/{expenseId}")
+  public ResponseEntity<EntityModel<Expense>> getUserExpense(@PathVariable int userId, @PathVariable int expenseId){
+	  Optional<User> user = userRepository.findById(userId);
+	  if(user.isEmpty())
+		  throw new UserNotFoundException(String.format("ID : %d user not found in our records", userId));
+	  Optional<Expense> expense = expenseRepository.findById(expenseId);
+	  if(expense.isEmpty())
+		  throw new ExpenseNotFoundException(String.format("ID : %d expense not found in our records",expenseId));
+	  if(expense.get().getUser().getUserId()!=userId)
+		  throw new InvalidActionException(String.format("Expense with ID %d is mapped to another user", expenseId));
+	  return new ResponseEntity<EntityModel<Expense>>(createExpense(expense.get()),HttpStatus.OK);
+  }
 }

@@ -13,6 +13,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -141,5 +142,26 @@ public class UserController {
 	  if(expense.get().getUser().getUserId()!=userId)
 		  throw new InvalidActionException(String.format("Expense with ID %d is mapped to another user", expenseId));
 	  return new ResponseEntity<EntityModel<Expense>>(createExpense(expense.get()),HttpStatus.OK);
+  }
+  @PutMapping(path="/users/{userId}/updateExpense")
+  public ResponseEntity<Expense> updateUserExpense(@PathVariable int userId, @Valid @RequestBody Expense exp){
+	  System.out.println(exp);
+	  Optional<User> user = userRepository.findById(userId);
+	  if(user.isEmpty())
+		  throw new UserNotFoundException(String.format("user with ID : %d not found in our records", userId));
+	  Optional<Expense> expense = expenseRepository.findById(exp.getId());
+	  if(expense.isEmpty())
+		  //throw a ExpenseNotFound Exveption
+		  throw new ExpenseNotFoundException(String.format("ID : %d expense not found in our records",exp.getId()));
+	  if(expense.get().getUser().getUserId()!=userId)
+		  throw new InvalidActionException(String.format("Expense with ID %d is mapped to another user", exp.getId()));
+	  if(exp.getAmount()!=0)
+		  expense.get().setAmount(exp.getAmount());
+	  if(exp.getDescription()!=null)
+		  expense.get().setDescription(exp.getDescription());
+		  // throw a Ivalid Exception
+	  expenseRepository.save(expense.get());
+	  return new ResponseEntity<Expense>(expense.get(),HttpStatus.OK);
+	  
   }
 }

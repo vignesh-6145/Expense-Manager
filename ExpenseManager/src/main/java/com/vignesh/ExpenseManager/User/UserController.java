@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vignesh.ExpenseManager.Exceptions.FailedToCreateUserException;
 import com.vignesh.ExpenseManager.Exceptions.InvalidActionException;
 import com.vignesh.ExpenseManager.Exceptions.InvalidPasswordException;
 import com.vignesh.ExpenseManager.Exceptions.UserNotFoundException;
@@ -37,8 +38,8 @@ public class UserController {
 		int userId = user.getUserId();
 		Link selfLink = linkTo(UserController.class).slash(userId).withSelfRel();
 		Link allUsersLink = linkTo(methodOn(UserController.class).getAllUsers()).withRel("all-users");
-		user.add(selfLink);
-		user.add(allUsersLink);
+		Link expenses = linkTo(UserController.class).slash(userId).slash("expenses").withRel("all-expenses");
+		user.add(selfLink,allUsersLink,expenses);
 		return user;
 	}
 	
@@ -57,7 +58,16 @@ public class UserController {
 	public UserController(UserRepository userRepository,ExpenseRepository expenseRepository) {
 		this.userRepository = userRepository;
 		this.expenseRepository = expenseRepository;
+	}
+	
+	@PostMapping(path="/users/adduser")
+	public ResponseEntity<User> addUser(@Valid @RequestBody User newUser) {
+		User user = userRepository.save(newUser);
+		System.out.println(user);
+		if(user == null) throw new FailedToCreateUserException("Something went wrong");
 
+		user = createUser(userRepository.findById(user.getUserId()).get());
+		return new ResponseEntity<User>(user,HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/users")

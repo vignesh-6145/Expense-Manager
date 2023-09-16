@@ -156,6 +156,7 @@ public class UserController {
 		  throw new InvalidActionException(String.format("Expense with ID %d is mapped to another user", expenseId));
 	  return new ResponseEntity<EntityModel<Expense>>(createExpense(expense.get()),HttpStatus.OK);
   }
+
   @PutMapping(path="/users/{userId}/updateExpense")
   public ResponseEntity<Expense> updateUserExpense(@PathVariable int userId, @Valid @RequestBody Expense exp){
 	  System.out.println(exp);
@@ -177,4 +178,5 @@ public class UserController {
 	  return new ResponseEntity<Expense>(expense.get(),HttpStatus.OK);
 	  
   }
+
 }

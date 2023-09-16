@@ -47,6 +47,11 @@ public class CustomResponseExceptionHandler extends ResponseEntityExceptionHandl
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
 		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
 	}
+	@ExceptionHandler(FailedToCreateUserException.class)
+	public final ResponseEntity<ErrorDetails> handleUserCreation(Exception ex, WebRequest request){
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)); 
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
+	}
 	
 	public final ResponseEntity<ErrorDetails> handleExpenseNptoundException(Exception ex, WebRequest request) throws Exception{
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));

@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@Entity
+@Entity(name="expense")
 public class Expense {
 	
 	@Id

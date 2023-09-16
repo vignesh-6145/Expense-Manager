@@ -53,4 +53,9 @@ public class CustomResponseExceptionHandler extends ResponseEntityExceptionHandl
 		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.UNAUTHORIZED);
 	}
 	
+	public final ResponseEntity<ErrorDetails> handleExpenseNptoundException(Exception ex, WebRequest request) throws Exception{
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),ex.getMessage(),request.getDescription(false));
+		return new ResponseEntity<ErrorDetails>(errorDetails,HttpStatus.NOT_FOUND);
+	}
+	
 }

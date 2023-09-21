@@ -39,9 +39,8 @@ public class UserController {
 	
 	public User createUser(User user){
 		int userId = user.getUserId();
-		Link selfLink = linkTo(UserController.class).slash(userId).withSelfRel();
+		Link selfLink = linkTo(UserController.class).slash("/users").slash(userId).withSelfRel();
 		Link allUsersLink = linkTo(methodOn(UserController.class).getAllUsers()).withRel("all-users");
-		Link expensesLink = linkTo(methodOn(UserController.class).getUser(userId)).withRel("expenses");
 //		user.add(selfLink);
 //		user.add(allUsersLink);
 //		user.add(selfLink,allUsersLink,expensesLink);

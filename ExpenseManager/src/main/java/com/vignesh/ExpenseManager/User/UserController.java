@@ -66,7 +66,7 @@ public class UserController {
 		this.expenseRepository = expenseRepository;
 	}
 	
-	@PostMapping(path="/users/adduser")
+	@PostMapping(path="/users/register")
 	public ResponseEntity<User> addUser(@Valid @RequestBody User newUser) {
 		User user = userRepository.save(newUser);
 		System.out.println(user);
@@ -134,6 +134,7 @@ public class UserController {
 		user = createUser(userRepository.findById(userId).get());
 		return new ResponseEntity<User>(user,HttpStatus.OK);
 	}
+
   @GetMapping(path="/users/{userId}/expenses")
 	public ResponseEntity<CollectionModel> getUserExpense(@PathVariable int userId){
 		Optional<User> user = userRepository.findById(userId);
@@ -177,5 +178,6 @@ public class UserController {
 	  return new ResponseEntity<Expense>(expense.get(),HttpStatus.OK);
 	  
   }
+
 
 }

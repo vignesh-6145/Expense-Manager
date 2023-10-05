@@ -31,10 +31,10 @@ As the Docker support was added to the project one can simple construct the imag
 
 - run the command ./mvnw install
 - build the image
- ex :- docker build -t exp-mngr-app .
+ ex :- `docker build -t exp-mngr-app .`
   - name of the image **exp-mngr-app** 
 - run the container by mapping the container port 8081 (since specified in applicatoin.properties) to any local port
- ex :- docker run -p 8082:8081 exp-mngr-app
+ ex :- `docker run -p 8082:8081 exp-mngr-app`
   - local port : 8082
   - container port : 8081
  - now you can use the API's with tools such as postman/talend platforms

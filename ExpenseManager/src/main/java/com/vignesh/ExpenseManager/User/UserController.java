@@ -7,19 +7,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import com.vignesh.ExpenseManager.Exceptions.ExpenseNotFoundException;
 import com.vignesh.ExpenseManager.Exceptions.FailedToCreateUserException;
@@ -32,8 +33,10 @@ import com.vignesh.ExpenseManager.Expense.ExpenseRepository;
 import jakarta.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
-	
+	@Value("${expense.manager.frontend.url}")
+	private String frontendURL;
 	private UserRepository userRepository;
 	private ExpenseRepository expenseRepository;
 	
@@ -44,7 +47,7 @@ public class UserController {
 //		user.add(selfLink);
 //		user.add(allUsersLink);
 //		user.add(selfLink,allUsersLink,expensesLink);
-		Link expenses = linkTo(UserController.class).slash(userId).slash("expenses").withRel("all-expenses");
+		Link expenses = linkTo(UserController.class).slash("/users").slash(userId).slash("expenses").withRel("all-expenses");
 		user.add(selfLink,allUsersLink,expenses);
 		return user;
 	}
@@ -66,6 +69,11 @@ public class UserController {
 		this.expenseRepository = expenseRepository;
 	}
 	
+	@DeleteMapping(path="/users/{userId}/expenses/{expenseId}")
+	public void deleteExpense(@PathVariable int userId,@PathVariable int expenseId) {
+		expenseRepository.deleteById(expenseId);
+	}
+	
 	@PostMapping(path="/users/register")
 	public ResponseEntity<User> addUser(@Valid @RequestBody User newUser) {
 		User user = userRepository.save(newUser);
@@ -79,6 +87,7 @@ public class UserController {
 	@GetMapping(path="/users")
 	public ResponseEntity<CollectionModel<User>> getAllUsers(){
 		List<User> users = userRepository.findAll().stream().map(user -> createUser(user)).toList();
+		System.out.println(frontendURL);
 //		users.replaceAll(this::createUser);	// appending links to each user one by one 
 		CollectionModel<User> usersWithHyperlinks = CollectionModel.of(users);
 //		return usersWithHyperlinks;
